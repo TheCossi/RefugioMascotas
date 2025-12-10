@@ -1,0 +1,230 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f7f6;
+  color: #181411;
+  line-height: 1.6;
+}
+
+/* -------------------------- */
+/*          HEADER            */
+/* -------------------------- */
+header {
+  background: #6b46c1;
+  color: white;
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo svg {
+  width: 40px;
+  height: 40px;
+  fill: #ee8c2b;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+nav a:hover {
+  opacity: 0.8;
+}
+
+/* BOTÓN TEMA */
+.theme-btn {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: 0.3s;
+}
+
+.theme-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* -------------------------- */
+/*          HERO              */
+/* -------------------------- */
+
+.hero {
+  background: linear-gradient(rgba(107, 70, 193, 0.8), rgba(107, 70, 193, 0.9)), url('https://images.unsplash.com/photo-1544563458-9730cf3791e3?w=1920') center/cover;
+  color: white;
+  text-align: center;
+  padding: 120px 20px;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.4rem;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+}
+
+.btn-primary {
+  background: #ee8c2b;
+  color: white;
+  padding: 16px 40px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: #4c1d95;
+}
+
+.pets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.pet-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.pet-card:hover {
+  transform: translateY(-10px);
+}
+
+.pet-card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.pet-info {
+  padding: 1.5rem;
+}
+
+.pet-info h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #4c1d95;
+}
+
+.pet-age {
+  color: #ee8c2b;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.adopt-btn {
+  width: 100%;
+  background: #6b46c1;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.adopt-btn:hover {
+  background: #553c9a;
+}
+
+footer {
+  background: #1a0033;
+  color: white;
+  text-align: center;
+  padding: 3rem 2rem;
+  margin-top: 4rem;
+}
+
+footer p {
+  opacity: 0.8;
+}
+
+/* -------------------------- */
+/*      MODO OSCURO           */
+/* -------------------------- */
+
+body.dark {
+  background-color: #0f0f12;
+  color: #e4e4e4;
+}
+
+body.dark header {
+  background: #2b0e57;
+}
+
+body.dark .section-title {
+  color: #b59aff;
+}
+
+body.dark .pet-card {
+  background: #1a1a1d;
+  box-shadow: 0 10px 20px rgba(255,255,255,0.05);
+}
+
+body.dark .adopt-btn {
+  background: #8b5cf6;
+}
+
+body.dark footer {
+  background: #0d0018;
+}
+
+body.dark nav a {
+  color: #f0eaff;
+}
