@@ -2,6 +2,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+const API_URL = 'https://refugiomascotas.onrender.com/api/auth' 
+
 export default function Register({ theme: t }) {
   const [form, setForm] = useState({
     nombre: '',
@@ -13,6 +15,7 @@ export default function Register({ theme: t }) {
   const [preview, setPreview] = useState(null)
   const [errors, setErrors] = useState({})
   const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -30,12 +33,8 @@ export default function Register({ theme: t }) {
   const handleImage = (e) => {
     const file = e.target.files[0]
     if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setForm({ ...form, foto: reader.result })
-        setPreview(reader.result)
-      }
-      reader.readAsDataURL(file)
+      setForm({ ...form, foto: file })
+      setPreview(URL.createObjectURL(file))
     }
   }
 
@@ -46,26 +45,50 @@ export default function Register({ theme: t }) {
     if (form.password.length < 8) newErrors.password = 'Mínimo 8 caracteres'
     if (!/[A-Z]/.test(form.password)) newErrors.password = 'Debe tener 1 mayúscula'
     if (!form.telefono || form.telefono.length < 7) newErrors.telefono = 'Teléfono inválido'
-    if (!form.foto) newErrors.foto = 'Sube una foto'
+    if (!form.foto) newErrors.foto = 'Sube una foto de perfil'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!validate()) return
 
-    const user = {
-      nombreCompleto: `${form.nombre} ${form.apellido}`,
-      password: form.password,
-      telefono: form.telefono,
-      foto: form.foto,
-      fechaRegistro: new Date().toISOString()
-    }
+    setLoading(true)
+    setSuccess('')
+    setErrors({})
 
-    localStorage.setItem('user', JSON.stringify(user))
-    setSuccess('¡Cuenta creada con éxito! Iniciando sesión...')
-    setTimeout(() => navigate('/'), 1500)
+    const formData = new FormData()
+    formData.append('nombre', `${form.nombre} ${form.apellido}`)
+    formData.append('email', form.email || `${form.nombre.toLowerCase()}@ejemplo.com`) 
+    formData.append('password', form.password)
+    formData.append('telefono', form.telefono)
+    formData.append('foto', form.foto)
+
+    try {
+      const res = await fetch(`${API_URL}/register`, {
+        method: 'POST',
+        body: formData
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.msg || 'Error al crear cuenta')
+      }
+
+      // Guardar en localStorage
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('user', JSON.stringify(data.user))
+
+      setSuccess('¡Cuenta creada con éxito! Redirigiendo...')
+      setTimeout(() => navigate('/'), 2000)
+
+    } catch (err) {
+      setErrors({ general: err.message })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -76,12 +99,14 @@ export default function Register({ theme: t }) {
         </h1>
 
         <div style={{ background: t.card, padding: '4rem', borderRadius: '50px', boxShadow: `0 40px 100px ${t.shadow}`, border: `4px solid ${t.border}60` }}>
+          {errors.general && <div style={{ background: '#fee', color: '#c00', padding: '1.5rem', borderRadius: '20px', textAlign: 'center', marginBottom: '2rem', fontWeight: 'bold' }}>{errors.general}</div>}
           {success && <div style={{ background: '#e6f7ee', color: '#0c6', padding: '1.5rem', borderRadius: '20px', textAlign: 'center', marginBottom: '2rem', fontWeight: 'bold' }}>{success}</div>}
 
           <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '2rem' }}>
+            {/* FOTO DE PERFIL */}
             <div style={{ textAlign: 'center' }}>
               <label style={{ cursor: 'pointer' }}>
-                <input type="file" accept="image/*" onChange={handleImage} style={{ display: 'none' }} />
+                <input type="file" accept="image/*" onChange={handleImage} style={{ display: 'none' }} required />
                 {preview ? (
                   <img src={preview} alt="Perfil" style={{ width: '160px', height: '160px', borderRadius: '50%', objectFit: 'cover', border: `6px solid ${t.accent}` }} />
                 ) : (
@@ -106,18 +131,23 @@ export default function Register({ theme: t }) {
             <input name="telefono" placeholder="Teléfono (ej: 77022426)" value={form.telefono} onChange={handleChange} required style={{ padding: '20px', borderRadius: '25px', border: `3px solid ${t.border}`, background: t.bg, color: t.text, fontSize: '1.3rem' }} />
             {errors.telefono && <p style={{ color: '#ff3333', fontSize: '0.9rem', marginTop: '-10px' }}>{errors.telefono}</p>}
 
-            <button type="submit" style={{
-              padding: '22px',
-              background: t.primary,
-              color: 'white',
-              border: 'none',
-              borderRadius: '30px',
-              fontSize: '1.8rem',
-              fontWeight: '900',
-              cursor: 'pointer',
-              boxShadow: `0 20px 60px ${t.shadow}`
-            }}>
-              Crear mi cuenta
+            <button 
+              type="submit" 
+              disabled={loading}
+              style={{
+                padding: '22px',
+                background: loading ? '#999' : t.primary,
+                color: 'white',
+                border: 'none',
+                borderRadius: '30px',
+                fontSize: '1.8rem',
+                fontWeight: '900',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                boxShadow: `0 20px 60px ${t.shadow}`,
+                opacity: loading ? 0.7 : 1
+              }}
+            >
+              {loading ? 'Creando cuenta...' : 'Crear mi cuenta'}
             </button>
           </form>
 
